@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  azure-devops-mcp:
+    build: .
+    container_name: azure-devops-mcp
+    environment:
+      - AZURE_DEVOPS_ORG=${AZURE_DEVOPS_ORG}
+      - AZURE_DEVOPS_PROJECT=${AZURE_DEVOPS_PROJECT}
+      - AZURE_DEVOPS_PAT=${AZURE_DEVOPS_PAT}
+    stdin_open: true  # Equivalent to -i flag (keeps stdin open)
+    tty: true         # Equivalent to -t flag (allocates pseudo-TTY)
+    restart: unless-stopped
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
+    name: mcp-network

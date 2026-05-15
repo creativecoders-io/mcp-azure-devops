@@ -1,0 +1,22 @@
+{
+  "name": "mcp-azure-devops",
+  "version": "1.0.0",
+  "description": "Azure DevOps MCP Server - provides tools for repo, branch, file, and PR operations",
+  "main": "server.py",
+  "scripts": {
+    "start": "python3 server.py",
+    "docker:build": "docker build -t mcp-azure-devops .",
+    "docker:run": "docker run -i --env-file .env mcp-azure-devops",
+    "docker:compose": "docker compose up -d"
+  },
+  "keywords": ["mcp", "azure-devops", "git", "model-context-protocol"],
+  "author": "Creative Coders BV",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/mcp-azure-devops.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/mcp-azure-devops/issues"
+  }
+}
