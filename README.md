@@ -123,7 +123,10 @@ export PORT=8000
 python3 server.py
 ```
 
-The server will be available at `http://0.0.0.0:8000` with SSE endpoint at `/messages`
+The server will be available at `http://0.0.0.0:8000` with the following endpoints:
+- `/messages` - SSE endpoint for MCP communication
+- `/health` - Health check endpoint (returns "OK")
+- `/` - Root health check endpoint (returns "OK")
 
 ### Docker Configuration
 

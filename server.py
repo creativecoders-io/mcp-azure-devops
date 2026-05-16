@@ -475,6 +475,7 @@ if __name__ == "__main__":
     from mcp.server.sse import SseServerTransport
     from starlette.applications import Starlette
     from starlette.routing import Route
+    from starlette.responses import Response
     
     transport_mode = os.getenv("MCP_TRANSPORT", "stdio")
     
@@ -496,9 +497,14 @@ if __name__ == "__main__":
                     app.create_initialization_options()
                 )
         
+        async def health(request):
+            return Response("OK", media_type="text/plain")
+        
         starlette_app = Starlette(
             routes=[
                 Route("/messages", endpoint=handle_sse),
+                Route("/health", endpoint=health),
+                Route("/", endpoint=health),  # Root health check
             ],
         )
         
