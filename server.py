@@ -471,15 +471,41 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
 
 if __name__ == "__main__":
-    transport = os.getenv("MCP_TRANSPORT", "stdio")
+    import asyncio
+    from mcp.server.sse import SseServerTransport
+    from starlette.applications import Starlette
+    from starlette.routing import Route
     
-    if transport == "http":
-        logger.info("Starting Azure DevOps MCP Server with Streamable HTTP transport...")
-        app.run(
-            transport="streamable-http",
-            host="0.0.0.0",
-            port=int(os.getenv("PORT", "8000")),
+    transport_mode = os.getenv("MCP_TRANSPORT", "stdio")
+    
+    if transport_mode == "http":
+        # SSE/HTTP transport
+        port = int(os.getenv("PORT", "8000"))
+        
+        sse = SseServerTransport("/messages")
+        
+        async def handle_sse(request):
+            async with sse.connect_sse(
+                request.scope,
+                request.receive,
+                request._send,
+            ) as streams:
+                await app.run(
+                    streams[0],
+                    streams[1],
+                    app.create_initialization_options()
+                )
+        
+        starlette_app = Starlette(
+            routes=[
+                Route("/messages", endpoint=handle_sse),
+            ],
         )
+        
+        import uvicorn
+        logger.info(f"Starting Azure DevOps MCP Server with SSE transport on port {port}...")
+        uvicorn.run(starlette_app, host="0.0.0.0", port=port)
     else:
+        # stdio transport
         logger.info("Starting Azure DevOps MCP Server with stdio transport...")
         app.run()

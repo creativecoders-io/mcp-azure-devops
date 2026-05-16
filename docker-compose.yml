@@ -8,13 +8,13 @@ services:
       - AZURE_DEVOPS_ORG=${AZURE_DEVOPS_ORG}
       - AZURE_DEVOPS_PROJECT=${AZURE_DEVOPS_PROJECT}
       - AZURE_DEVOPS_PAT=${AZURE_DEVOPS_PAT}
-      # Transport mode: "stdio" (default) or "http"
+      # Transport mode: "stdio" (default) or "http" (SSE transport)
       - MCP_TRANSPORT=stdio
       # - MCP_TRANSPORT=http
       # - PORT=8000
     stdin_open: true  # Equivalent to -i flag (keeps stdin open)
     tty: true         # Equivalent to -t flag (allocates pseudo-TTY)
-    # Uncomment for HTTP transport:
+    # Uncomment for HTTP/SSE transport:
     # ports:
     #   - "8000:8000"
     restart: unless-stopped
