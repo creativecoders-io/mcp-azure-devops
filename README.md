@@ -94,6 +94,53 @@ docker compose up -d
 | `AZURE_DEVOPS_ORG` | Yes | Azure DevOps organization name |
 | `AZURE_DEVOPS_PROJECT` | Yes | Azure DevOps project name |
 | `AZURE_DEVOPS_PAT` | Yes | Personal Access Token with Code and PR permissions |
+| `MCP_TRANSPORT` | No | Transport mode: `stdio` (default) or `http` |
+| `PORT` | No | Port for HTTP transport (default: `8000`) |
+
+### Transport Modes
+
+The server supports two transport modes:
+
+#### stdio Transport (Default)
+For local process integrations. The server communicates over standard input/output.
+
+```bash
+# Run with stdio (default)
+python3 server.py
+
+# Or explicitly set
+export MCP_TRANSPORT=stdio
+python3 server.py
+```
+
+#### Streamable HTTP Transport
+For independently running MCP servers over HTTP. This is the recommended production transport.
+
+```bash
+# Run with HTTP transport
+export MCP_TRANSPORT=http
+export PORT=8000
+python3 server.py
+```
+
+The server will be available at `http://0.0.0.0:8000`
+
+### Docker Configuration
+
+For HTTP transport with Docker:
+
+```bash
+docker run -i \
+  -e AZURE_DEVOPS_ORG="<organization-name>" \
+  -e AZURE_DEVOPS_PROJECT="<project-name>" \
+  -e AZURE_DEVOPS_PAT="<your-pat-token>" \
+  -e MCP_TRANSPORT=http \
+  -e PORT=8000 \
+  -p 8000:8000 \
+  mcp-azure-devops
+```
+
+Or update your `docker-compose.yml` to uncomment the HTTP transport configuration.
 
 ### Creating a Personal Access Token
 
