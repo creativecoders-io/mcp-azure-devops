@@ -486,6 +486,9 @@ if __name__ == "__main__":
         sse = SseServerTransport("/messages")
         
         async def handle_sse(request):
+            if request.method == "POST":
+                await sse.handle_post_message(request.scope, request.receive, request._send)
+                return
             async with sse.connect_sse(
                 request.scope,
                 request.receive,
