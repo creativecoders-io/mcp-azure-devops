@@ -497,16 +497,14 @@ if __name__ == "__main__":
                     app.create_initialization_options()
                 )
 
-        async def handle_messages(request):
-            await sse.handle_post_message(request.scope, request.receive, request._send)
-
         async def health(request):
             return Response("OK", media_type="text/plain")
 
+        from starlette.routing import Mount
         starlette_app = Starlette(
             routes=[
                 Route("/sse", endpoint=handle_sse),
-                Route("/messages", endpoint=handle_messages, methods=["POST"]),
+                Mount("/messages", app=sse.handle_post_message),
                 Route("/health", endpoint=health),
                 Route("/", endpoint=health),
             ],
