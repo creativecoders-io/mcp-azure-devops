@@ -484,11 +484,8 @@ if __name__ == "__main__":
         port = int(os.getenv("PORT", "8000"))
         
         sse = SseServerTransport("/messages")
-        
+
         async def handle_sse(request):
-            if request.method == "POST":
-                await sse.handle_post_message(request.scope, request.receive, request._send)
-                return
             async with sse.connect_sse(
                 request.scope,
                 request.receive,
@@ -499,15 +496,19 @@ if __name__ == "__main__":
                     streams[1],
                     app.create_initialization_options()
                 )
-        
+
+        async def handle_messages(request):
+            await sse.handle_post_message(request.scope, request.receive, request._send)
+
         async def health(request):
             return Response("OK", media_type="text/plain")
-        
+
         starlette_app = Starlette(
             routes=[
-                Route("/messages", endpoint=handle_sse),
+                Route("/sse", endpoint=handle_sse),
+                Route("/messages", endpoint=handle_messages, methods=["POST"]),
                 Route("/health", endpoint=health),
-                Route("/", endpoint=health),  # Root health check
+                Route("/", endpoint=health),
             ],
         )
         
