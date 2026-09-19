@@ -472,6 +472,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
 if __name__ == "__main__":
     import asyncio
+    from mcp.server.stdio import stdio_server
     from mcp.server.sse import SseServerTransport
     from starlette.applications import Starlette
     from starlette.routing import Route
@@ -516,4 +517,13 @@ if __name__ == "__main__":
     else:
         # stdio transport
         logger.info("Starting Azure DevOps MCP Server with stdio transport...")
-        app.run()
+
+        async def run_stdio():
+            async with stdio_server() as (read_stream, write_stream):
+                await app.run(
+                    read_stream,
+                    write_stream,
+                    app.create_initialization_options()
+                )
+
+        asyncio.run(run_stdio())

@@ -8,11 +8,13 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy server code
+# Copy server and all helper scripts
 COPY server.py .
+COPY scripts/ ./scripts/
 
-# Make script executable
+# Make scripts executable
 RUN chmod +x server.py
+RUN find ./scripts -type f -name "*.py" -exec chmod +x {} +
 
 # Set environment variables (can be overridden at runtime)
 ENV PYTHONUNBUFFERED=1
